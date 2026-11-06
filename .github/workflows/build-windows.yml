@@ -20,7 +20,10 @@ jobs:
 
       - name: Extract source archive
         shell: pwsh
-        run: Expand-Archive -LiteralPath source/PerimeterAudit_Source.zip -DestinationPath src -Force
+        run: |
+          New-Item -ItemType Directory -Force src | Out-Null
+          tar -xf source/PerimeterAudit_Source.tar.xz -C src
+          if ($LASTEXITCODE -ne 0) { throw 'Source archive extraction failed' }
 
       - name: Set application version
         shell: pwsh
