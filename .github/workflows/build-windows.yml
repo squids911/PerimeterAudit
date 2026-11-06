@@ -25,6 +25,16 @@ jobs:
           tar -xf source/PerimeterAudit_Source.tar.xz -C src
           if ($LASTEXITCODE -ne 0) { throw 'Source archive extraction failed' }
 
+      - name: Apply compatibility fix
+        shell: pwsh
+        run: |
+          $source = 'src/PerimeterAudit/MailAudit.cs'
+          if (Test-Path $source) {
+            $content = Get-Content -LiteralPath $source -Raw
+            $content = $content.Replace('Dns.GetHostEntryAsync(addr, token)', 'Dns.GetHostEntryAsync(addr)')
+            Set-Content -LiteralPath $source -Value $content -Encoding utf8
+          }
+
       - name: Set application version
         shell: pwsh
         run: |
